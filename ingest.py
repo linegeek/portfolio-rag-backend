@@ -19,5 +19,5 @@ if __name__ == "__main__":
         )
 
     count = ingest_documents(docs)
-    print(f"Ingested {count} chunks from {filename} into Qdrant collection '{QDRANT_COLLECTION}'")
+    print(f"Ingested {count} chunks into Qdrant collection '{QDRANT_COLLECTION}'")
 

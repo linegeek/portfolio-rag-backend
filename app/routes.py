@@ -4,9 +4,7 @@ from config import TOP_K
 from app.schemas import AskRequest, AskResponse, SourceItem, RetrieveResponse, ContextItem
 from app.services import (
     extract_latest_user_question,
-    normalize_history,
     retrieve_context,
-    generate_answer,
 )
 
 router = APIRouter()
@@ -27,7 +25,7 @@ def retrieve(req: AskRequest) -> RetrieveResponse:
         raise HTTPException(status_code=400, detail="Could not extract user question")
 
     top_k = req.top_k or TOP_K
-    contexts = retrieve_context(question, top_k=top_k)
+    contexts = retrieve_context(req.collection, question, top_k=top_k)
 
     return RetrieveResponse(
         question=question,

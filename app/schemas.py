@@ -15,7 +15,8 @@ class ChatMessage(BaseModel):
 
 
 class AskRequest(BaseModel):
-    messages: Optional[List[ChatMessage]] = None
+    messages: List[ChatMessage]
+    collection: str
     top_k: Optional[int] = Field(default=None, ge=1, le=20)
 
 

@@ -145,11 +145,11 @@ def embed_query(query: str) -> List[float]:
     return vector.tolist()
 
 
-def retrieve_context(query: str, top_k: int = 5) -> List[Dict]:
+def retrieve_context(collection: str, query: str, top_k: int = 5) -> List[Dict]:
     query_vector = embed_query(query)
 
     results = qdrant.query_points(
-        collection_name=QDRANT_COLLECTION,
+        collection_name=collection,
         query=query_vector,
         limit=top_k,
     ).points
