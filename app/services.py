@@ -4,6 +4,7 @@ from typing import Any, List, Dict
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from config import (
     ANTHROPIC_API_KEY,
@@ -216,19 +217,31 @@ def load_text_file(path: str) -> str:
         return f.read()
 
 
+# Initialize the splitter once, outside the loop
+# chunk_size is in characters, but it respects word boundaries
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50,
+    separators=["\n\n", "\n", " ", ""] # It tries to split by paragraph, then line, then space
+)
+
+
 def ingest_documents(docs: List[Dict[str, str]]) -> int:
     ensure_collection()
 
     points: List[PointStruct] = []
+    count = 0
 
     for doc in docs:
         source = doc["source"]
         text = doc["text"]
 
-        chunks = chunk_text(text)
+        # 1. Improved Chunking: No more split words!
+        chunks = splitter.split_text(text) 
         if not chunks:
             continue
 
+        # 2. Batch Embedding (More efficient than 1-by-1)
         vectors = embed_texts(chunks)
 
         for idx, (chunk, vector) in enumerate(zip(chunks, vectors)):
@@ -244,8 +257,16 @@ def ingest_documents(docs: List[Dict[str, str]]) -> int:
                 )
             )
 
+            # 3. Memory Management: Upsert in batches of 100
+            if len(points) >= 100:
+                qdrant.upsert(collection_name=QDRANT_COLLECTION, points=points)
+                count += len(points)
+                points = []
+
+    # Final upsert for remaining points
     if points:
         qdrant.upsert(collection_name=QDRANT_COLLECTION, points=points)
+        count += len(points)
 
-    return len(points)
+    return count
 

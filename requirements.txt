@@ -4,3 +4,5 @@ uvicorn
 qdrant-client
 sentence-transformers
 dotenv
+langchain
+langchain-text-splitters

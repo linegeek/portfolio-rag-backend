@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from config import TOP_K, ANTHROPIC_API_KEY
+from config import TOP_K
 from app.schemas import AskRequest, AskResponse, SourceItem, RetrieveResponse, ContextItem
 from app.services import (
     extract_latest_user_question,
