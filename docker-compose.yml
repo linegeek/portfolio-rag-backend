@@ -1,0 +1,9 @@
+services:
+  api:
+    build: .
+    ports:
+      - "${PB_PORT}:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
