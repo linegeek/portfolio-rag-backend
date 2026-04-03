@@ -118,18 +118,19 @@ docker run -p 6333:6333 qdrant/qdrant
 
 ### 4 — Ingest documents
 
-Plain-text files are already included under `data/`. To ingest them, open `ingest.py` and populate the `filenames` list with the files you want to load, then run:
-
-```python
-# ingest.py
-filenames = ["info.txt", "summary.txt", "skills.txt", "education.txt"]
-```
+Plain-text files are already included under `data/`. Run the ingestion script directly:
 
 ```bash
 python ingest.py
 ```
 
-This splits each file into overlapping chunks using `RecursiveCharacterTextSplitter`, embeds them in batches, and upserts them into the configured Qdrant collection.
+Or, if running via Docker Compose:
+
+```bash
+docker compose run --rm api python ingest.py
+```
+
+This scans all `.txt` files in the `data/` directory, splits them into overlapping chunks using `RecursiveCharacterTextSplitter`, embeds them in batches, and upserts them into the configured Qdrant collection.
 
 ### 5 — Start the API server
 

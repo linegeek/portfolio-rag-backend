@@ -4,7 +4,8 @@ from config import QDRANT_COLLECTION
 from app.services import load_text_file, ingest_documents
 
 if __name__ == "__main__":
-    filenames = []
+    data_dir = "data"
+    filenames = [f for f in os.listdir(data_dir) if f.endswith(".txt")]
 
     docs = []
 
